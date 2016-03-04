@@ -13,6 +13,7 @@ void imprimiruser(vector<User>&arreglo);
 void imprimirgames(vector<Game>&arreglo);
 bool validar(vector<Game>&arreglo, int id);
 bool validaruser(vector<User>&arreglo,string,string,int&);
+bool validarfriend(vector<User>&arreglo, string,string);
 
 int main(int argc, char*argv[]){
 	int menu = 1;
@@ -41,7 +42,7 @@ int main(int argc, char*argv[]){
 			if(valida){
 				valida = usuarios[opcion].isValidPassword(username,password);
 				if (valida){
-					cout << "1-Agregar juego\n2-Eliminar juego\n3-Cambiar contraseña" << endl;
+					cout << "1-Agregar juego\n2-Eliminar juego\n3-Cambiar contraseña\n4-Agregar amigo" << endl;
 					cin >> menu;
 					if(menu == 1){//agregar juego
 						int id;
@@ -69,6 +70,17 @@ int main(int argc, char*argv[]){
 						cout << "Ingrese su nueva contraseña: ";
 						cin >> password;
 						usuarios[opcion].changePassword(password);
+					}else if(menu == 4){//agregar amigo
+						string nombre;
+						cout << "Ingrese el nombre de su \"amigo\":" << endl;
+						cin >> nombre;
+						valida = validarfriend(usuarios,nombre,username);
+						if(valida){
+							usuarios[opcion].addFriend(nombre);
+							cout << "BIEN HECHO" << endl;
+						}else{
+							cout << "NO EXISTE" << endl;
+						}
 					} 
 				}else{
 					cout << "No puede modificar este usuario" << endl;
@@ -118,7 +130,8 @@ int main(int argc, char*argv[]){
 			imprimiruser(usuarios);
 		}else if(menu == 7){
 			imprimirgames(games);
-		} 
+		}
+		cout << "" << endl;
 	}
 	return 0;
 }
@@ -140,8 +153,16 @@ bool validar(vector<Game>&arreglo, int id){
 }
 bool validaruser(vector<User>&arreglo,string nombre,string pass,int& j){
 	for(int i = 0; i < arreglo.size();i++){
-		if(arreglo[i].getUsername() == nombre && arreglo[i] == pass){
+		if(arreglo[i].isValidPassword(nombre,pass)){
 			j = i;
+			return true;
+		}
+	}
+	return false;
+}
+bool validarfriend(vector<User>&arreglo, string nombre, string user){
+	for(int i = 0; i < arreglo.size();i++){
+		if(arreglo[i].getUsername() == nombre && nombre != user){
 			return true;
 		}
 	}
